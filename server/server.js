@@ -93,6 +93,18 @@ app.patch('/todos/:id', (req, res, err) => {
         .catch(e => res.status(400).send(e));
 });
 
+app.post('/users', (req, res, err) => {
+    var user = new User(_.pick(req.body, ['email', 'password']));
+
+    user.save().then(() => {
+        return user.generateAuthToken();
+        // res.send({ user });
+    }).then(token => {
+        //x- | create custom header        
+        res.header('x-auth', token).send(user);
+    }).catch(e => res.status(400).send(e));
+});
+
 app.listen(port, () => {
     console.log('Started on PORT 3000');
 });
